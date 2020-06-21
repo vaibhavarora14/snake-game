@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { Controller } from './components/controller/controller';
 import { Toggle } from './components/common/toggle';
-
-const pageCenterStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  height: '100vh',
-  alignItems: 'center'
-}
+import { pageCenterStyle, snakeGameOuterStyle } from './App.style';
 
 function App() {
   let [input, setInput] = useState('');
@@ -27,7 +21,7 @@ function App() {
 
   return (
     <div style={pageCenterStyle}>
-      <div style={{ display: 'inline-flex', flexDirection: 'column' }}>
+      <div style={{ ...snakeGameOuterStyle, maxHeight: (window.innerHeight - 100) }}>
         <h1> Snake Game </h1>
         <Toggle state={isPlayerNameEmpty()}>
           <input value={input}
@@ -38,10 +32,10 @@ function App() {
           <button disabled={isInputEmpty()} onClick={updatePlayerName}> Play </button>
         </Toggle>
         <Toggle state={!isPlayerNameEmpty()}>
-          <Controller player={{ name: playerName }}></Controller>
+          <Controller player={{ name: playerName }} style={{ maxHeight: (window.innerHeight - 100) }}></Controller>
         </Toggle>
       </div>
-    </div>
+    </div >
   );
 }
 

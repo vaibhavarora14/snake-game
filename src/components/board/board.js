@@ -1,7 +1,12 @@
-import React from 'react';
+import { useEffect } from 'react';
 
-const Board = () => {
-    return <></>;
+const Board = (props) => {
+    useEffect(() => {
+        if (props.canvas.current) {
+            // TODO: draw board
+        }
+    })
+    return '';
 }
 
 export { Board }
