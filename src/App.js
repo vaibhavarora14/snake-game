@@ -1,24 +1,19 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { Controller } from './components/controller/controller';
 
 function App() {
+  let [input, setInput] = useState('');
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ display: 'flex', justifyContent: 'center', height: '100vh', alignItems: 'center' }}>
+      <div style={{ display: 'inline-flex', flexDirection: 'column' }}>
+        <h1> Snake Game </h1>
+        <input
+          style={{ marginBottom: '0.5rem' }}
+          placeholder="Your name"
+          onChange={(event) => setInput(event.target.value)} />
+        <button disabled={input.trim().length === 0}> Play </button>
+        <Controller></Controller>
+      </div>
     </div>
   );
 }
