@@ -24,10 +24,10 @@ const fillCanvasWithBoxes = (canvas, boxSize) => {
     const colors = ['#d9fad7', '#d2f5d0'];
     const context = canvas.getContext('2d');
     let yAxis = 0;
-    let rowsCount = Math.floor(canvas.clientWidth / boxSize[1]);
+    let rowsCount = Math.floor(canvas.clientHeight / boxSize[1]);
 
     while (rowsCount > 0) {
-        let columnsCount = canvas.clientHeight / boxSize[0];
+        let columnsCount = canvas.clientWidth / boxSize[0];
         let nextColor = (rowsCount % 2 === 0) ? colors[0] : colors[1];
         let xAxis = 0;
         while (columnsCount > 0) {
