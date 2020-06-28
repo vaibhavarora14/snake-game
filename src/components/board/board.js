@@ -17,7 +17,7 @@ const calculateBoxSize = (width, height) => {
     const boxWidth = getEqualParitionsLength(width);
     const boxHeight = getEqualParitionsLength(height);
 
-    return [boxWidth, boxHeight - 5];
+    return [boxWidth, boxHeight];
 };
 
 const fillCanvasWithBoxes = (canvas, boxSize, context) => {
@@ -46,6 +46,8 @@ const Board = (props) => {
     useEffect(() => {
         if (props.canvas.current && props.context) {
             const canvas = props.canvas.current;
+            canvas.setAttribute('width', canvas.clientWidth);
+            canvas.setAttribute('height', canvas.clientHeight);
             const boxSize = calculateBoxSize(canvas.clientWidth, canvas.clientHeight);
 
             fillCanvasWithBoxes(canvas, boxSize, props.context);
