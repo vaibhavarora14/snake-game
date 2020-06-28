@@ -20,9 +20,8 @@ const calculateBoxSize = (width, height) => {
     return [boxWidth, boxHeight - 5];
 };
 
-const fillCanvasWithBoxes = (canvas, boxSize) => {
+const fillCanvasWithBoxes = (canvas, boxSize, context) => {
     const colors = ['#d9fad7', '#d2f5d0'];
-    const context = canvas.getContext('2d');
     let yAxis = 0;
     let rowsCount = Math.floor(canvas.clientHeight / boxSize[1]);
 
@@ -39,16 +38,19 @@ const fillCanvasWithBoxes = (canvas, boxSize) => {
             columnsCount--;
         }
         yAxis += boxSize[1];
-        rowsCount--;
+        rowsCount -= 1;
     }
 }
 
 const Board = (props) => {
     useEffect(() => {
-        if (props.canvas.current) {
+        if (props.canvas.current && props.context) {
             const canvas = props.canvas.current;
             const boxSize = calculateBoxSize(canvas.clientWidth, canvas.clientHeight);
-            fillCanvasWithBoxes(canvas, boxSize);
+
+            fillCanvasWithBoxes(canvas, boxSize, props.context);
+
+            props.getBoxSize.call(undefined, boxSize);
         }
     })
     return '';
