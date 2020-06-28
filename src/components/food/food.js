@@ -1,5 +1,14 @@
 import { useEffect } from "react";
-import apple from './icons8-apple.svg';
+import apple from './apple.svg';
+import citrus from './citrus.svg';
+import kiwi from './kiwi.svg';
+import mushroom from './mushroom.svg';
+import peach from './peach.svg';
+import raspberry from './raspberry.svg';
+import watermelon from './watermelon.svg';
+import { getRandomItem } from '../common/array';
+
+const foodItems = [apple, citrus, kiwi, mushroom, peach, raspberry, watermelon];
 
 const Food = (props) => {
     useEffect(() => {
@@ -7,8 +16,7 @@ const Food = (props) => {
         const availableBoxes = props.availableBoxes;
 
         if (props.canvas.current && context && availableBoxes.length > 0) {
-            const randomBox = availableBoxes[Math.floor(Math.random() * availableBoxes.length)];
-            console.log(randomBox);
+            const randomBox = getRandomItem(availableBoxes);
             drawFood(randomBox, context, props.canvas.current);
         }
     })
@@ -19,7 +27,7 @@ const Food = (props) => {
         };
         const image = new Image(10, 10);
         image.onload = drawImage;
-        image.src = apple;
+        image.src = getRandomItem(foodItems);
 
     }
 
