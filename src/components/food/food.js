@@ -15,7 +15,7 @@ const Food = (props) => {
 
     const drawFood = (coords, context, canvas) => {
         function drawImage() {
-            context.drawImage(this, (coords[0] - 15 + 1), (coords[1] + 1), 12, 8);
+            context.drawImage(this, (coords[0] + 1), (coords[1] + 1), 13, 13);
         };
         const image = new Image(10, 10);
         image.onload = drawImage;
