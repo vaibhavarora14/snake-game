@@ -53,7 +53,7 @@ const Controller = (props) => {
         <div>Hi {props.player.name}, game is still under development 🙂</div>
         <canvas style={{ maxHeight: props.style.maxHeight, flex: 1 }} ref={canvas}></canvas>
         <Board getBoxSize={getBoxSize} canvas={canvas} context={context} />
-        <Snake canvas={canvas} size={boxSize} />
+        <Snake context={context} canvas={canvas} size={boxSize} availableBoxes={availableBoxes} />
         <Food availableBoxes={availableBoxes} size={boxSize} context={context} canvas={canvas} />
     </>);
 }
