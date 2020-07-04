@@ -33,10 +33,10 @@ const Controller = (props) => {
         let result = [];
         let rows = Math.floor(canvas.clientWidth / boxSize[0]);
 
-        let boxSizeTemp = [...boxSize];
+        let boxSizeTemp = [0, 0];
         while (rows >= 0) {
             let columns = Math.floor(canvas.clientHeight / boxSize[1]);
-            boxSizeTemp[1] = boxSize[1];
+            boxSizeTemp[1] = 0;
             while (columns >= 0) {
                 result.push([...boxSizeTemp]);
                 boxSizeTemp[1] += boxSize[1];
