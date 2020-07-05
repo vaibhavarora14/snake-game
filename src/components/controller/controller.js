@@ -8,7 +8,13 @@ const Controller = (props) => {
     const canvas = useRef(null);
     let [context, setContext] = useState(null);
     let [boxSize, setBoxSize] = useState([]);
-    let [availableBoxes, setAvailableBoxes] = useState([]);
+    let availableBoxes = useRef([]);
+    const [coordsAvailable, setAvailableCoords] = useState([]);
+    const requiredFoodCount = useRef(1);
+    const [foodCount, setFoodCount] = useState(0);
+
+    const [requiredSnakeCount, setRequiredSnakeCount] = useState(1);
+    const [runningSnakeCount, setRunningSnakeCount] = useState(0);
 
     const getBoxSize = (size) => {
         if (!isEqual(size, boxSize)) {
@@ -23,10 +29,12 @@ const Controller = (props) => {
     useEffect(() => {
         const totalBoxes = calculateTotalBoxesInBoard(canvas.current, boxSize);
 
-        if (!isEqual(availableBoxes, totalBoxes)) {
-            setAvailableBoxes(availableBoxes.concat(totalBoxes));
+        if (!isEqual(availableBoxes.current, totalBoxes)) {
+            availableBoxes.current = totalBoxes;
+            setAvailableCoords(totalBoxes);
+            // setAvailableBoxes(availableBoxes.concat(totalBoxes));
         }
-        console.log(availableBoxes)
+        console.log(availableBoxes.current)
     }, [availableBoxes, boxSize]);
 
     const calculateTotalBoxesInBoard = (canvas, boxSize) => {
@@ -53,8 +61,23 @@ const Controller = (props) => {
         <div>Hi {props.player.name}, game is still under development 🙂</div>
         <canvas style={{ maxHeight: props.style.maxHeight, flex: 1 }} ref={canvas}></canvas>
         <Board getBoxSize={getBoxSize} canvas={canvas} context={context} />
-        <Snake context={context} canvas={canvas} size={boxSize} availableBoxes={availableBoxes} />
-        <Food availableBoxes={availableBoxes} size={boxSize} context={context} canvas={canvas} />
+        <Snake
+            runningSnake={{ count: runningSnakeCount, setter: setRunningSnakeCount }}
+            requiredSnakeCount={requiredSnakeCount}
+            context={context}
+            canvas={canvas}
+            boxSize={boxSize}
+            availableCoords={{ coords: coordsAvailable, setter: setAvailableCoords }}
+            food={{ count: foodCount, setter: setFoodCount }}
+        />
+        <Food
+            availableCoords={{ coords: coordsAvailable, setter: setAvailableCoords }}
+            requiredFoodCount={requiredFoodCount}
+            availableBoxes={availableBoxes}
+            size={boxSize}
+            context={context}
+            food={{ count: foodCount, setter: setFoodCount }}
+        />
     </>);
 }
 

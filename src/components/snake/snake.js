@@ -1,48 +1,142 @@
 import { useEffect, useRef } from "react";
 import { getRandomItem } from "../common/array";
 
+const SNAKE_SPEED = 100;
+
+const findfirstTimeSnakeCoord = (availableBoxes, boxSize) => {
+    const item = getRandomItem(availableBoxes);
+    const endPointOfItem = [item[0] + boxSize[0], item[1] + boxSize[1]];
+
+    const isBoxMatchingEndPointData = (box) => box[0] === endPointOfItem[0] && box[1] === endPointOfItem[0];
+    const endPointInAvailableBoxes = availableBoxes.find(isBoxMatchingEndPointData);
+
+    if (endPointInAvailableBoxes) {
+        return item;
+    }
+
+    return findfirstTimeSnakeCoord(availableBoxes);
+}
+
+/**
+ * Draw Snake from start, till end
+ */
+const drawSnake = ({ context, availableBoxes, boxSize, lastSnakeCoordinates, direction }) => {
+    context.fillStyle = '#000000';
+
+    if (!lastSnakeCoordinates) {
+        const snakeCoordinates = findfirstTimeSnakeCoord(availableBoxes, boxSize);
+        lastSnakeCoordinates = snakeCoordinates;
+        context.fillRect(snakeCoordinates[0], snakeCoordinates[1], boxSize[0], boxSize[1]);
+    }
+    else {
+        debugger;
+        switch (direction.current) {
+            case "left": {
+                context.fillRect(
+                    lastSnakeCoordinates[0] - boxSize[0],
+                    lastSnakeCoordinates[1],
+                    boxSize[0],
+                    boxSize[1]
+                );
+                lastSnakeCoordinates[0] = lastSnakeCoordinates[0] - boxSize[0];
+                break;
+            }
+            case "right": {
+                context.fillRect(
+                    lastSnakeCoordinates[0] + boxSize[0],
+                    lastSnakeCoordinates[1],
+                    boxSize[0],
+                    boxSize[1]
+                );
+                lastSnakeCoordinates[0] = lastSnakeCoordinates[0] + boxSize[0];
+                break;
+            }
+            case "down": {
+                context.fillRect(
+                    lastSnakeCoordinates[0],
+                    lastSnakeCoordinates[1] + boxSize[1],
+                    boxSize[0],
+                    boxSize[1]
+                );
+                lastSnakeCoordinates[1] = lastSnakeCoordinates[1] + boxSize[1];
+                break;
+            }
+            case "up": {
+                context.fillRect(
+                    lastSnakeCoordinates[0],
+                    lastSnakeCoordinates[1] - boxSize[1],
+                    boxSize[0],
+                    boxSize[1]
+                );
+                lastSnakeCoordinates[1] = lastSnakeCoordinates[1] - boxSize[1];
+                break;
+            }
+            default: {
+                // do nothing
+            }
+        }
+    }
+
+    setTimeout(() => {
+        requestAnimationFrame(() => {
+            drawSnake({ context, availableBoxes, boxSize, direction, lastSnakeCoordinates })
+        })
+    }, SNAKE_SPEED);
+}
+
 const Snake = (props) => {
-    let boxSize = useRef([]);
-
-    const findfirstTimeSnakeCoord = (availableBoxes) => {
-        const item = getRandomItem(availableBoxes);
-        const endPointOfItem = [item[0] + boxSize.current[0], item[1] + boxSize.current[1]];
-
-        const isBoxMatchingEndPointData = (box) => box[0] === endPointOfItem[0] && box[1] === endPointOfItem[0];
-        const endPointInAvailableBoxes = availableBoxes.find(isBoxMatchingEndPointData);
-
-        if (endPointInAvailableBoxes) {
-            return item;
-        }
-
-        return findfirstTimeSnakeCoord(availableBoxes);
-    }
-
-    /**
-     * Draw Snake from start, till end
-     * @param {HTMLCanvasElement} canvas - will be used to identify where snake can be drawn
-     * @param {CanvasRenderingContext2D} context - will be used to draw snake in canvas
-     * @param {Array} availableBoxes - will tell the available empty boxes on canvas. helps to know that snake is inside map and not collided with anything
-     * @param {Array} lastSnakeCoordinates - will tell the current snakeCoordinates, so that this method can draw successor step of snake coordinates
-     */
-    const drawSnake = (context, availableBoxes, lastSnakeCoordinates) => {
-        if (!lastSnakeCoordinates) {
-            context.fillStyle = '#000000';
-            const snakeCoordinates = findfirstTimeSnakeCoord(availableBoxes);
-            context.fillRect(snakeCoordinates[0], snakeCoordinates[1], boxSize.current[0], boxSize.current[1]);
-        }
-    }
-
+    const direction = useRef('right');
 
     useEffect(() => {
-        if (props.context && props.size && props.availableBoxes && props.availableBoxes.length > 0) {
-            const context = props.context;
-            boxSize.current = props.size;
+        document.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case 'ArrowLeft': {
+                    direction.current = 'left';
+                    break;
+                }
+                case 'ArrowDown': {
+                    direction.current = 'down';
+                    break;
+                }
+                case 'ArrowRight': {
+                    direction.current = 'right';
+                    break;
+                }
+                case 'ArrowUp': {
+                    direction.current = 'up';
+                    break;
+                }
+                default: {
+                    // do nothing
+                }
+            }
+        });
+        return () => document.removeEventListener('keydown');
+    }, [direction]);
 
-            drawSnake(context, props.availableBoxes);
+    useEffect(() => {
+        if (!props.context) {
+            return;
         }
-    }, [drawSnake, props.availableBoxes, props.canvas, props.context, props.size]);
+
+        const availableCoords = props.availableCoords.coords;
+
+        if (availableCoords.length === 0 || props.boxSize.length === 0) {
+            return;
+        }
+
+        if (props.requiredSnakeCount === props.runningSnake.count) {
+            return;
+        }
+
+        drawSnake({
+            context: props.context,
+            availableBoxes: availableCoords,
+            boxSize: props.boxSize,
+            direction
+        });
+    }, [props.availableCoords.coords, props.boxSize, props.context, props.requiredSnakeCount, props.runningSnake.count]);
     return '';
 }
 
-export { Snake }
+export { Snake };
