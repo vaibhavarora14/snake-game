@@ -11,7 +11,7 @@ const findfirstTimeSnakeCoord = (availableBoxes, boxSize) => {
     const endPointInAvailableBoxes = availableBoxes.find(isBoxMatchingEndPointData);
 
     if (endPointInAvailableBoxes) {
-        return item;
+        return [item];
     }
 
     return findfirstTimeSnakeCoord(availableBoxes);
@@ -20,66 +20,68 @@ const findfirstTimeSnakeCoord = (availableBoxes, boxSize) => {
 /**
  * Draw Snake from start, till end
  */
-const drawSnake = ({ context, availableBoxes, boxSize, lastSnakeCoordinates, direction }) => {
+const drawSnake = ({ context, availableBoxes, boxSize, lastSnakeCoordinates, direction, lastBoardData }) => {
     context.fillStyle = '#000000';
+
+    const currentBoardData = [];
 
     if (!lastSnakeCoordinates) {
         const snakeCoordinates = findfirstTimeSnakeCoord(availableBoxes, boxSize);
+
+        for (const coordinate of snakeCoordinates) {
+            currentBoardData.push({
+                coords: [...coordinate],
+                image: context.getImageData(coordinate[0], coordinate[1], boxSize[0], boxSize[1])
+            });
+            context.fillRect(coordinate[0], coordinate[1], boxSize[0], boxSize[1]);
+        }
+
         lastSnakeCoordinates = snakeCoordinates;
-        context.fillRect(snakeCoordinates[0], snakeCoordinates[1], boxSize[0], boxSize[1]);
     }
     else {
-        debugger;
-        switch (direction.current) {
-            case "left": {
-                context.fillRect(
-                    lastSnakeCoordinates[0] - boxSize[0],
-                    lastSnakeCoordinates[1],
-                    boxSize[0],
-                    boxSize[1]
-                );
-                lastSnakeCoordinates[0] = lastSnakeCoordinates[0] - boxSize[0];
-                break;
+        for (const data of lastBoardData) {
+            context.putImageData(data.image, data.coords[0], data.coords[1]);
+        }
+        for (const coordinate of lastSnakeCoordinates) {
+            switch (direction.current) {
+                case "left": {
+                    coordinate[0] = coordinate[0] - boxSize[0];
+                    break;
+                }
+                case "right": {
+                    coordinate[0] = coordinate[0] + boxSize[0];
+                    break;
+                }
+                case "down": {
+                    coordinate[1] = coordinate[1] + boxSize[1];
+                    break;
+                }
+                case "up": {
+                    coordinate[1] = coordinate[1] - boxSize[1];
+                    break;
+                }
+                default: {
+                    // do nothing
+                }
             }
-            case "right": {
-                context.fillRect(
-                    lastSnakeCoordinates[0] + boxSize[0],
-                    lastSnakeCoordinates[1],
-                    boxSize[0],
-                    boxSize[1]
-                );
-                lastSnakeCoordinates[0] = lastSnakeCoordinates[0] + boxSize[0];
-                break;
-            }
-            case "down": {
-                context.fillRect(
-                    lastSnakeCoordinates[0],
-                    lastSnakeCoordinates[1] + boxSize[1],
-                    boxSize[0],
-                    boxSize[1]
-                );
-                lastSnakeCoordinates[1] = lastSnakeCoordinates[1] + boxSize[1];
-                break;
-            }
-            case "up": {
-                context.fillRect(
-                    lastSnakeCoordinates[0],
-                    lastSnakeCoordinates[1] - boxSize[1],
-                    boxSize[0],
-                    boxSize[1]
-                );
-                lastSnakeCoordinates[1] = lastSnakeCoordinates[1] - boxSize[1];
-                break;
-            }
-            default: {
-                // do nothing
-            }
+
+            currentBoardData.push({
+                coords: [...coordinate],
+                image: context.getImageData(coordinate[0], coordinate[1], boxSize[0], boxSize[1])
+            });
+
+            context.fillRect(
+                coordinate[0],
+                coordinate[1],
+                boxSize[0],
+                boxSize[1]
+            );
         }
     }
 
     setTimeout(() => {
         requestAnimationFrame(() => {
-            drawSnake({ context, availableBoxes, boxSize, direction, lastSnakeCoordinates })
+            drawSnake({ context, availableBoxes, boxSize, direction, lastSnakeCoordinates, lastBoardData: [...currentBoardData] })
         })
     }, SNAKE_SPEED);
 }
