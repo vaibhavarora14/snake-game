@@ -10,7 +10,7 @@
     "is-equal": "1.6.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.2"
   },
   "resolutions": {
     "yargs-parser": "^19.0.0",
