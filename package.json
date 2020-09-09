@@ -13,7 +13,7 @@
     "react-scripts": "3.4.3"
   },
   "resolutions": {
-    "yargs-parser": "^19.0.0",
+    "yargs-parser": "^20.0.0",
     "serialize-javascript": "^5.0.0"
   },
   "scripts": {
